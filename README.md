@@ -1,6 +1,6 @@
 # DanteConnector
 
-DanteConnector is a Java-based project designed to facilitate the discovery and basic management of Dante devices and channels on a network through the mDNS protocol.
+DanteConnector is a Java-based project that aims to facilitate the discovery of Dante devices and channels using mDNS, as well as basic management of Dante devices and connections between them.
 
 ## Context
 
