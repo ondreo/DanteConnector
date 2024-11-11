@@ -6,7 +6,7 @@ import javax.jmdns.ServiceListener;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Klasa obsługująca odkrywanie w sieci kanałów transmitujących Dante za pomocą protokołu mDNS.
+ * Class handling the discovery of transmitting Dante channels on the network using the mDNS protocol.
  */
 @Slf4j
 public class MdnsDanteTxChannelServiceDiscovery implements ServiceListener {
@@ -18,12 +18,12 @@ public class MdnsDanteTxChannelServiceDiscovery implements ServiceListener {
     @Override
     public void serviceRemoved(ServiceEvent event) {
         log.debug("Service removed: {}", event.getInfo());
-        log.info("Z sieci zniknął kanał transmitujący Dante: '{}'", event.getName());
+        log.info("Dante transmitting channel disappeared from the network: '{}'", event.getName());
     }
 
     @Override
     public void serviceResolved(ServiceEvent event) {
         log.debug("Service resolved: {}", event.getInfo());
-        log.info("Znaleziono kanał transmitujący Dante: '{}'", event.getName());
+        log.info("Found Dante transmitting channel: '{}'", event.getName());
     }
 }

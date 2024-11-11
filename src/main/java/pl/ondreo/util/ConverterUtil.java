@@ -9,21 +9,21 @@ public abstract class ConverterUtil {
     }
 
     /**
-     * Metoda konwertująca ciąg znaków ASCII do ciągu znaków w postaci szesnastkowej, np.
-     * ciąg znaków "main-pc-name" zamieni na "6d61696e2d70632d6e616d65".
+     * Method converting an ASCII string to a hexadecimal string, e.g.,
+     * the string "main-pc-name" will be converted to "6d61696e2d70632d6e616d65".
      *
-     * @param asciiString ciąg znaków ASCII
-     * @return ciąg znaków w postaci szesnastkowej
+     * @param asciiString ASCII string
+     * @return hexadecimal string
      */
     public static String convertAsciiStringtoHexString(String asciiString) {
         return HexFormat.of().formatHex(asciiString.getBytes());
     }
 
     /**
-     * Metoda konwertująca szesnastkowy ciąg znaków na tablicę bajtów.
+     * Method converting a hexadecimal string to a byte array.
      *
-     * @param hexString ciąg znaków postaci szesnastkowej
-     * @return tablica bajtów
+     * @param hexString hexadecimal string
+     * @return byte array
      */
     public static byte[] convertHexStringToByteArray(String hexString) {
         int len = hexString.length();

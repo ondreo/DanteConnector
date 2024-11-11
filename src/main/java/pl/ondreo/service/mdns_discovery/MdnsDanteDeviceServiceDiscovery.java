@@ -7,7 +7,7 @@ import javax.jmdns.ServiceListener;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Klasa obsługująca odkrywanie w sieci urządzeń Dante za pomocą protokołu mDNS.
+ * Class handling the discovery of Dante devices on the network using the mDNS protocol.
  */
 @Slf4j
 public class MdnsDanteDeviceServiceDiscovery implements ServiceListener {
@@ -19,7 +19,7 @@ public class MdnsDanteDeviceServiceDiscovery implements ServiceListener {
     @Override
     public void serviceRemoved(ServiceEvent event) {
         log.debug("Service removed: {}", event.getInfo());
-        log.info("Z sieci zniknęło urządzenie Dante: '{}'", event.getName());
+        log.info("Dante device disappeared from the network: '{}'", event.getName());
     }
 
     @Override
@@ -30,9 +30,9 @@ public class MdnsDanteDeviceServiceDiscovery implements ServiceListener {
         String[] addresses = serviceInfo.getHostAddresses();
         if (addresses.length > 0) {
             String ipAddress = addresses[0];
-            log.info("Znaleziono urządzenie Dante: '{}' z adresem IP: {}", event.getName(), ipAddress);
+            log.info("Found Dante device: '{}' with IP address: {}", event.getName(), ipAddress);
         } else {
-            log.warn("Znaleziono urządzenie Dante: '{}', ale nie udało się pobrać adresu IP.", event.getName());
+            log.warn("Found Dante device: '{}', but failed to retrieve IP address.", event.getName());
         }
     }
 }

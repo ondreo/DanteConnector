@@ -25,20 +25,20 @@ public class DanteConnectorServiceImpl implements DanteConnectorService {
 
         int destinationPortNumber = 4440;
 
-        // długość ciała pakietu UDP wyrażona w ilości bajtów
+        // length of the UDP packet body expressed in bytes
         int dantePacketLength =  (76 + transmitterChannelName.length() + transmitterDeviceName.length()) / 2;
 
-        // 3410 - komenda na połączenie lub rozłączenie dwóch kanałów audio
+        // 3410 - command to connect or disconnect two audio channels
         int danteCommand = 0x3410;
 
         String hexStringTemplate = "280900{dantePacketLength}{packetId}{danteCommand}00000000000000000800020100{receiverChannelNumber}0003002400270000000000000000{transmitterChannelName}00{transmitterDeviceName}00";
 
-        // Utworzenie szablonu szesnastkowego ciągu znaków z nazwanymi symbolami zastępczymi
+        // Creating a hexadecimal string template with named placeholders
         String hexString = getHexUdpMessageStringForConnectionAndDisconnection(transmitterDeviceName, transmitterChannelName, receiverChannelNumber,
                                                                                dantePacketLength, danteCommand,
                                                                                hexStringTemplate);
 
-        // inkrementacja id pakietu przy każdym żądaniu
+        // increment packet id with each request
         incrementPacketId();
 
         logConnectionParameters(asciiTransmitterDeviceName, asciiTransmitterChannelName, receiverChannelNumber);
@@ -53,20 +53,20 @@ public class DanteConnectorServiceImpl implements DanteConnectorService {
 
         int destinationPortNumber = 4440;
 
-        // długość ciała pakietu UDP wyrażona w ilości bajtów
+       // length of the UDP packet body expressed in bytes
         int dantePacketLength =  72 / 2;
 
-        // 3410 - komenda na połączenie lub rozłączenie dwóch kanałów audio
+        // 3410 - command to connect or disconnect two audio channels
         int danteCommand = 0x3410;
 
         String hexStringTemplate = "280900{dantePacketLength}{packetId}{danteCommand}00000000000000000800020100{receiverChannelNumber}0003000000000000000000000000";
 
-        // Utworzenie szablonu szesnastkowego ciągu znaków z nazwanymi symbolami zastępczymi
+        // Creating a hexadecimal string template with named placeholders
         String hexString = getHexUdpMessageStringForConnectionAndDisconnection(null, null, receiverChannelNumber,
                                                                                dantePacketLength, danteCommand,
                                                                                hexStringTemplate);
 
-        // inkrementacja id pakietu przy każdym żądaniu
+        // increment packet id with each request
         incrementPacketId();
 
         logDisconnectionParameters(receiverChannelNumber);
@@ -80,20 +80,20 @@ public class DanteConnectorServiceImpl implements DanteConnectorService {
     public void changeDeviceSamplingRate(String destinationIpAddress, int samplingRate) {
         int destinationPortNumber = 38700;
 
-        // długość ciała pakietu UDP wyrażona w ilości bajtów
+        // length of the UDP packet body expressed in bytes
         int dantePacketLength =  80 / 2;
 
-        // 0e38 - komenda na zmianę częstotliwości próbkowania dźwięku i głębi bitowej dźwięku
+        // 0e38 - command to change the sampling rate and bit depth of the audio
         int danteCommand = 0x0e38;
 
         String hexStringTemplate = "ffff00{dantePacketLength}{packetId}{danteCommand}00e04cc5a6810000417564696e617465073400810000006400000001000{samplingRate}";
 
-        // Utworzenie szablonu szesnastkowego ciągu znaków z nazwanymi symbolami zastępczymi
+        // Creating a hexadecimal string template with named placeholders
         String hexString = getHexUdpMessageStringForChangeSamplingRate(samplingRate,
                                                                        dantePacketLength, danteCommand,
                                                                        hexStringTemplate);
 
-        // inkrementacja id pakietu przy każdym żądaniu
+        // increment packet id with each request
         incrementPacketId();
 
         logChangeDeviceSamplingRateParameters(samplingRate);
@@ -107,20 +107,20 @@ public class DanteConnectorServiceImpl implements DanteConnectorService {
     public void changeDeviceBitDepth(String destinationIpAddress, int bitDepth) {
         int destinationPortNumber = 38700;
 
-        // długość ciała pakietu UDP wyrażona w ilości bajtów
+        // length of the UDP packet body expressed in bytes
         int dantePacketLength =  80 / 2;
 
-        // 0e38 - komenda na zmianę częstotliwości próbkowania dźwięku i głębi bitowej dźwięku
+        // 0e38 - command to change the sampling rate and bit depth of the audio
         int danteCommand = 0x0e38;
 
         String hexStringTemplate = "ffff00{dantePacketLength}{packetId}{danteCommand}00e04cc5a6810000417564696e617465073400830000006400000001000000{bitDepth}";
 
-        // Utworzenie szablonu szesnastkowego ciągu znaków z nazwanymi symbolami zastępczymi
+        // Creating a hexadecimal string template with named placeholders
         String hexString = getHexUdpMessageStringForChangeBitDepth(bitDepth,
                                                                    dantePacketLength, danteCommand,
                                                                    hexStringTemplate);
 
-        // inkrementacja id pakietu przy każdym żądaniu
+        // increment packet id with each request
         incrementPacketId();
 
         logChangeDeviceBitDepthParameters(bitDepth);
@@ -131,12 +131,12 @@ public class DanteConnectorServiceImpl implements DanteConnectorService {
     }
 
     /**
-     * Metoda zwiększająca o 1 id pakietu.
+     * Method that increments the packet id by 1.
      * <br>
-     * Id pakietu musi się zmieścić w czterech cyfrach szesnastkowych, więc jeśli przekroczy ten zakres, to go resetujemy.
+     * The packet id must fit within four hexadecimal digits, so if it exceeds this range, we reset it.
      * <br>
-     * Id pakietu potrzebne jest jedynie do tymczasowej identyfikacji, żeby się pakiety "nie zgubiły",
-     * więc po zakończeniu obsługi pakietu inny pakiet może przyjąć ten sam identyfikator.
+     * The packet id is only needed for temporary identification to ensure packets don't get "lost",
+     * so after handling a packet, another packet can take the same identifier.
      */
     private void incrementPacketId() {
         ++packetId;
@@ -147,13 +147,14 @@ public class DanteConnectorServiceImpl implements DanteConnectorService {
     }
 
     /**
-     * Metoda tworząca szesnastkowy ciąg znaków, wysyłany jako treść pakietu UDP na podstawie podanych parametrów.
+     * Method that creates a hexadecimal string, sent as the content of a UDP packet based on the given parameters.
+     * It is used for connection or disconnection packets.
      */
     private String getHexUdpMessageStringForConnectionAndDisconnection(String transmitterDeviceName, String transmitterChannelName, int receiverChannelNumber,
                                                                        int dantePacketLength, int danteCommand,
                                                                        String hexStringTemplate) {
 
-        // Utworzenie mapy parametrów wraz z ich formatami
+        // Creating a map of parameters along with their formats
         Map<String, String> values = new HashMap<>();
         values.put("dantePacketLength", String.format("%02X", dantePacketLength));
         values.put("packetId", String.format("%04X", packetId));
@@ -162,60 +163,61 @@ public class DanteConnectorServiceImpl implements DanteConnectorService {
         values.put("transmitterChannelName", transmitterChannelName);
         values.put("transmitterDeviceName", transmitterDeviceName);
 
-        // Zamiana symboli zastępczych z szablonu na ich rzeczywiste wartości
+        // Replacing placeholders in the template with their actual values
         return formatTemplateString(hexStringTemplate, values);
     }
 
     /**
-     * Metoda tworząca szesnastkowy ciąg znaków, wysyłany jako treść pakietu UDP na podstawie podanych parametrów.
+     * Method that creates a hexadecimal string, sent as the content of a UDP packet based on the given parameters.
+     * It is used for changing sampling rate packets.
      */
     private String getHexUdpMessageStringForChangeSamplingRate(int samplingRate,
                                                                int dantePacketLength, int danteCommand,
                                                                String hexStringTemplate) {
 
-        // Utworzenie mapy parametrów wraz z ich formatami
+        // Creating a map of parameters along with their formats
         Map<String, String> values = new HashMap<>();
         values.put("dantePacketLength", String.format("%02X", dantePacketLength));
         values.put("packetId", String.format("%04X", packetId));
         values.put("danteCommand", String.format("%04X", danteCommand));
         values.put("samplingRate", String.format("%05X", samplingRate));
 
-        // Zamiana symboli zastępczych z szablonu na ich rzeczywiste wartości
+        // Replacing placeholders in the template with their actual values
         return formatTemplateString(hexStringTemplate, values);
     }
 
     /**
-     * Metoda tworząca szesnastkowy ciąg znaków, wysyłany jako treść pakietu UDP na podstawie podanych parametrów.
+     * Method that creates a hexadecimal string, sent as the content of a UDP packet based on the given parameters.
+     * It is used for changing bit depth packets.
      */
     private String getHexUdpMessageStringForChangeBitDepth(int bitDepth,
                                                            int dantePacketLength, int danteCommand,
                                                            String hexStringTemplate) {
 
-        // Utworzenie mapy parametrów wraz z ich formatami
+        // Creating a map of parameters along with their formats
         Map<String, String> values = new HashMap<>();
         values.put("dantePacketLength", String.format("%02X", dantePacketLength));
         values.put("packetId", String.format("%04X", packetId));
         values.put("danteCommand", String.format("%04X", danteCommand));
         values.put("bitDepth", String.format("%02X", bitDepth));
 
-        // Zamiana symboli zastępczych z szablonu na ich rzeczywiste wartości
+        // Replacing placeholders in the template with their actual values
         return formatTemplateString(hexStringTemplate, values);
     }
 
     /**
-     * Formatuje ciąg szablonu, zastępując zdefiniowane w nim klucze odpowiednimi wartościami
-     * z mapy.
+     * Formats a template string by replacing defined keys with corresponding values from the map.
      *
      * <p>
-     * W szablonie każda para klucz-wartość w mapie jest używana do zastąpienia miejsca
-     * wstawienia o postaci `{key}` wartością powiązaną z danym kluczem w mapie.
-     * Jeśli klucz `{key}` występuje w szablonie, zostanie on zastąpiony odpowiednią
-     * wartością z mapy.
+     * In the template, each key-value pair in the map is used to replace a placeholder
+     * in the form of `{key}` with the value associated with that key in the map.
+     * If the key `{key}` appears in the template, it will be replaced with the corresponding
+     * value from the map.
      * </p>
      *
-     * @param template ciąg szablonu zawierający miejsca wstawienia w formacie `{key}`
-     * @param values   mapa zawierająca klucze i odpowiadające im wartości do wstawienia w szablonie
-     * @return sformatowany ciąg, w którym wszystkie klucze zostały zastąpione odpowiednimi wartościami
+     * @param template the template string containing placeholders in the format `{key}`
+     * @param values the map containing keys and their corresponding values to insert into the template
+     * @return the formatted string with all keys replaced by their corresponding values
      */
     private String formatTemplateString(String template, Map<String, String> values) {
         for (Map.Entry<String, String> entry : values.entrySet()) {
@@ -229,32 +231,33 @@ public class DanteConnectorServiceImpl implements DanteConnectorService {
     }
 
     private static void logConnectionParameters(String asciiTransmitterDeviceName, String asciiTransmitterChannelName, int receiverChannelNumber) {
-        log.info("Wysyłanie żądania połączenia dwóch kanałów audio");
-        log.debug("Nazwa urządzenia nadającego: {}", asciiTransmitterDeviceName);
-        log.debug("Nazwa kanału nadającego: {}", asciiTransmitterChannelName);
-        log.debug("Numer kanału odbierającego: {}", receiverChannelNumber);
+        log.info("Sending request to connect two audio channels");
+        log.debug("Transmitter device name: {}", asciiTransmitterDeviceName);
+        log.debug("Transmitter channel name: {}", asciiTransmitterChannelName);
+        log.debug("Receiver channel number: {}", receiverChannelNumber);
     }
 
     private static void logDisconnectionParameters(int receiverChannelNumber) {
-        log.info("Wysyłanie żądania rozłączenia dwóch kanałów audio");
-        log.debug("Numer kanału odbierającego: {}", receiverChannelNumber);
+        log.info("Sending request to disconnect two audio channels");
+        log.debug("Receiver channel number: {}", receiverChannelNumber);
     }
 
     private static void logChangeDeviceSamplingRateParameters(int samplingRate) {
-        log.info("Wysyłanie żądania zmiany częstotliwości próbkowania urządzenia");
-        log.debug("Nowa częstotliwość próbkowania urządzenia: {}", samplingRate);
+        log.info("Sending request to change device sampling rate");
+        log.debug("New device sampling rate: {}", samplingRate);
     }
 
     private static void logChangeDeviceBitDepthParameters(int bitDepth) {
-        log.info("Wysyłanie żądania zmiany głębi bitowej dźwięku urządzenia");
-        log.debug("Nowa głębia bitowa dźwięku urządzenia: {}", bitDepth);
+        log.info("Sending request to change device bit depth");
+        log.debug("New device bit depth: {}", bitDepth);
     }
 
     /**
-     * Metoda wysyłająca pakiet UDP na podany adres IP, na podany port, z danym ciągiem znaków w postaci szesnastkowej
-     * @param destinationIpAddressString docelowy adres IP żądania
-     * @param destinationPort port docelowy żądania
-     * @param hexString treść pakietu UDP w postaci szesnastkowego ciągu znaków
+     * Method that sends a UDP packet to the given IP address, to the given port, with the given string in hexadecimal format
+     *
+     * @param destinationIpAddressString target IP address of the request
+     * @param destinationPort target port of the request
+     * @param hexString content of the UDP packet in hexadecimal string format
      */
     private void sendUdpMessage(String destinationIpAddressString,
                                 int destinationPort,
@@ -262,24 +265,24 @@ public class DanteConnectorServiceImpl implements DanteConnectorService {
         try {
             InetAddress destinationIpAddress = InetAddress.getByName(destinationIpAddressString);
 
-            // Konwersja ciągu znaków szesnastkowych na tablicę bajtów
+            // Convert hexadecimal string to byte array
             byte[] bufferData = ConverterUtil.convertHexStringToByteArray(hexString);
 
-            // Utworzenie pakietu UDP
+            // Create UDP packet
             DatagramPacket packet = new DatagramPacket(bufferData, bufferData.length, destinationIpAddress, destinationPort);
 
-            // Utworzenie gniazda UDP na wysłanie pakietu
+            // Create UDP socket to send the packet
             try (DatagramSocket socket = new DatagramSocket()) {
-                log.debug("Wysyłany ciąg znaków w postaci szesnastkowej: {}", hexString);
+                log.debug("Sending hexadecimal string: {}", hexString);
 
-                // Wysłanie pakietu
+                // Send the packet
                 socket.send(packet);
 
-                log.info("Pakiet został wysłany pomyślnie.");
+                log.info("Packet sent successfully.");
             }
 
         } catch (Exception e) {
-            log.error("Wystąpił błąd: {}", e.getMessage(), e);
+            log.error("An error occurred: {}", e.getMessage(), e);
         }
     }
 }

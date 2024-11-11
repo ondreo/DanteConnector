@@ -18,9 +18,9 @@ public class MdnsServiceDiscovery {
             jmdns.addServiceListener("_netaudio-cmc._udp.local.", new MdnsDanteDeviceServiceDiscovery());
             jmdns.addServiceListener("_netaudio-chan._udp.local.", new MdnsDanteTxChannelServiceDiscovery());
         } catch (UnknownHostException e) {
-            log.error("Wystąpił błąd typu UnknownHostException: {}", e.getMessage());
+            log.error("An UnknownHostException occurred: {}", e.getMessage());
         } catch (IOException e) {
-            log.error("Wystąpił błąd typu IOException: {}", e.getMessage());
+            log.error("An IOException occurred: {}", e.getMessage());
         }
     }
 }
